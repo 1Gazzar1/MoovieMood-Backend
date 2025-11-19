@@ -1,0 +1,30 @@
+{
+  "name": "MoovieMood_Backend",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx watch ./src",
+    "start": "tsx && node ./src/index.js",
+    "build": "tsc",
+    "migrate": "drizzle-kit migrate",
+    "generate": "drizzle-kit generate"
+  },
+  "keywords": [],
+  "dependencies": {
+    "@google/genai": "^1.30.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "groq-sdk": "^0.35.0",
+    "mongoose": "^8.20.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.5",
+    "@types/node": "^24.9.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}
