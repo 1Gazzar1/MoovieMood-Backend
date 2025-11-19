@@ -6,6 +6,7 @@ import { embedUserQuery } from "./util/embeddings";
 import { connectDB } from "./db/db";
 import { RAG } from "./util/LLM_Chat";
 import { MovieEmbedding, MovieEmbeddingType } from "./db/schema";
+import { getMoviesRange } from "./util/getMovies";
 
 config();
 
@@ -13,14 +14,21 @@ const app = express();
 const PORT = process.env.PORT;
 
 // global middleware
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
 
 // test endpoint
 app.get("/", (req, res) => {
     console.log(req.method, req.host, req.hostname);
     res.json("Hello world");
 });
+app.get("/movies/:start/:end", async (req: Request, res: Response) => {
+    const st = +req.params.start;
+    const end = +req.params.end;
 
+    const movies = await getMoviesRange(st, end);
+
+    res.status(200).json(movies);
+});
 // RAG endpoint
 app.post("/rag", async (req: Request, res: Response) => {
     // user query

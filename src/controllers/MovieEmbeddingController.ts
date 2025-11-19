@@ -10,8 +10,13 @@ export const createMovieEmbedding = async (req: Request, res: Response) => {
 };
 
 export const createMovieEmbeddings = async (req: Request, res: Response) => {
-    const movies = req.body;
-    const embeddings = await embedMovies(movies);
+    const movies = req.body as Movie[];
+    const moviesInDB = await MovieEmbedding.find().select("id");
+
+    const moviesInDbIdsSet = new Set<number>(moviesInDB.map((m) => m._id));
+    const moviesNotInDb = movies.filter((m) => !moviesInDbIdsSet.has(m.id));
+
+    const embeddings = await embedMovies(moviesNotInDb);
     const documents = await MovieEmbedding.create(embeddings);
 
     res.status(200).json({ status: 200, documents });
