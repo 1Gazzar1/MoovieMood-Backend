@@ -34,9 +34,20 @@ export async function embedMovies(
     }
     // do it normally and not parallel
     else {
+        console.log(`-------Movies Incoming: ${movies.length}-------`);
+        let count = 0;
         for (const movie of movies) {
-            output.push(await embedMovie(movie));
-            await sleep((60 / 100) * 1000); // to avoid RPM (100 request)
+            try {
+                output.push(await embedMovie(movie));
+                console.log(`${++count}- embedded movie with id: ${movie.id}`);
+
+                await sleep((60 / 100) * 1000); // to avoid RPM (100 request)
+            } catch (error) {
+                const err =
+                    error instanceof Error ? error.message : "Unknown Error";
+                console.log(`${++count}- ${movie.id} Failed with ${err}`);
+                continue;
+            }
         }
         return output;
     }

@@ -4,7 +4,7 @@ import { config } from "dotenv";
 import movieEmbeddingRouter from "./routes/MovieEmbeddingRouter";
 import { embedUserQuery } from "./util/embeddings";
 import { connectDB } from "./db/db";
-import { RAG } from "./util/LLM_Chat";
+import { getGroqChatCompletion, RAG } from "./util/LLM_Chat";
 import { MovieEmbedding, MovieEmbeddingType } from "./db/schema";
 import { getMoviesRange } from "./util/getMovies";
 
@@ -29,13 +29,23 @@ app.get("/movies/:start/:end", async (req: Request, res: Response) => {
 
     res.status(200).json(movies);
 });
+// ai chat endpoint
+app.post("/ai", async (req: Request, res: Response) => {
+    // query , which consists of all the chats of the user and the ai.
+    const { q } = req.body;
+    const response = await getGroqChatCompletion(q);
+
+    res.status(200).json({ msg: response });
+});
 // RAG endpoint
 app.post("/rag", async (req: Request, res: Response) => {
     // user query
     const { q } = req.query;
     console.log(q);
 
-    const userPreference = req.body; //should be a list of movie ids
+    const userPreference = req.body || []; //should be a list of movie ids
+    if (!Array.isArray(userPreference))
+        throw ERRORS.BAD_REQUEST("body has an object and not a list!");
     console.log(userPreference);
 
     if (typeof q !== "string")
@@ -52,7 +62,7 @@ app.post("/rag", async (req: Request, res: Response) => {
                 path: "embedding",
                 queryVector: userEmbedding,
                 numCandidates: 150,
-                limit: 5,
+                limit: 10,
             },
         },
     ])) as MovieEmbeddingType[];

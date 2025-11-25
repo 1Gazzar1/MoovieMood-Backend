@@ -5,7 +5,6 @@ import mongoose from "mongoose";
 configDotenv();
 
 const DB_URL = process.env.DATABASE_URL;
-
 export async function connectDB() {
     try {
         // Connect and store the connection
