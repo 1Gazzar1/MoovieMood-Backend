@@ -1,9 +1,10 @@
 import { GoogleGenAI } from "@google/genai";
 import { configDotenv } from "dotenv";
-import { formatMovieToText } from "./formatMovie";
-import { MovieEmbeddingType } from "src/db/schema";
-import { ERRORS } from "src/errors/error";
-import { sleep } from "./sleep";
+import { formatMovieToText } from "./formatMovie.js";
+import type { MovieEmbeddingType } from "../db/schema.js";
+import { ERRORS } from "../errors/error.js";
+import { sleep } from "./sleep.js";
+import type { Movie } from "../types/movie.js";
 configDotenv();
 
 const API_KEY = process.env.EMBEDDING_MODEL_API_KEY;

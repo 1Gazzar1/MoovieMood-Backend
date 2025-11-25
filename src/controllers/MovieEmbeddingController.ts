@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import { MovieEmbedding } from "src/db/schema";
-import { embedMovie, embedMovies } from "src/util/embeddings";
+import { MovieEmbedding } from "../db/schema.js";
+import { embedMovie, embedMovies } from "../util/embeddings.js";
+import type { Movie } from "../types/movie.js";
 
 export const createMovieEmbedding = async (req: Request, res: Response) => {
     const movie = req.body;

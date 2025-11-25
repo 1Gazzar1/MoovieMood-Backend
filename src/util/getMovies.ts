@@ -1,4 +1,5 @@
-import { ERRORS } from "src/errors/error";
+import { ERRORS } from "../errors/error.js";
+import type { Movie } from "../types/movie.js";
 
 async function getMovies() {
     const movies = await fetch(

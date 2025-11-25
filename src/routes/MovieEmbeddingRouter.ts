@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
     createMovieEmbedding,
     createMovieEmbeddings,
-} from "src/controllers/MovieEmbeddingController";
+} from "../controllers/MovieEmbeddingController.js";
 
 const movieEmbeddingRouter = Router();
 

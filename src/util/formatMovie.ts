@@ -1,3 +1,4 @@
+import type { Movie } from "../types/movie.js";
 export function formatMovieToText(movie: Movie) {
     return `Title: ${movie.title}
             Release Date: ${movie.release_date}

@@ -1,6 +1,6 @@
 import Groq from "groq-sdk";
-import { getMoviesPerIds } from "./getMovies";
-import { formatMovieToText } from "./formatMovie";
+import { getMoviesPerIds } from "./getMovies.js";
+import { formatMovieToText } from "./formatMovie.js";
 
 const groq = new Groq({ apiKey: process.env.LLM_MODEL_API_KEY });
 

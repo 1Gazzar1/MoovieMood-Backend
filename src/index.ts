@@ -1,14 +1,14 @@
 import express, { ErrorRequestHandler, Request, Response } from "express";
-import { CustomError, ERRORS } from "./errors/error";
+import { CustomError, ERRORS } from "./errors/error.js";
 import { config } from "dotenv";
-import movieEmbeddingRouter from "./routes/MovieEmbeddingRouter";
-import { embedUserQuery } from "./util/embeddings";
-import { connectDB } from "./db/db";
-import { getGroqChatCompletion, RAG } from "./util/LLM_Chat";
-import { MovieEmbedding, MovieEmbeddingType } from "./db/schema";
-import { getMoviesRange } from "./util/getMovies";
+import movieEmbeddingRouter from "./routes/MovieEmbeddingRouter.js";
+import { embedUserQuery } from "./util/embeddings.js";
+import { connectDB } from "./db/db.js";
+import { getGroqChatCompletion, RAG } from "./util/LLM_Chat.js";
+import { MovieEmbedding, MovieEmbeddingType } from "./db/schema.js";
+import { getMoviesRange } from "./util/getMovies.js";
 import cors from "cors";
-import { log } from "./middleware/log";
+import { log } from "./middleware/log.js";
 
 config();
 
