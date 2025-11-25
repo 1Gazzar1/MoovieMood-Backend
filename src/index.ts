@@ -7,6 +7,8 @@ import { connectDB } from "./db/db";
 import { getGroqChatCompletion, RAG } from "./util/LLM_Chat";
 import { MovieEmbedding, MovieEmbeddingType } from "./db/schema";
 import { getMoviesRange } from "./util/getMovies";
+import cors from "cors";
+import { log } from "./middleware/log";
 
 config();
 
@@ -14,7 +16,20 @@ const app = express();
 const PORT = process.env.PORT;
 
 // global middleware
+
+// cors
+app.use(
+    cors({
+        origin: ["http://localhost:5173", "https://mooviemood.vercel.app"],
+    })
+);
+
+// json bodies
 app.use(express.json({ limit: "50mb" }));
+
+// logging middleware
+
+app.use(log);
 
 // test endpoint
 app.get("/", (req, res) => {
