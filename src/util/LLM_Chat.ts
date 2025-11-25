@@ -1,4 +1,4 @@
-import Groq from "groq-sdk";
+import { Groq } from "groq-sdk";
 import { getMoviesPerIds } from "./getMovies.js";
 import { formatMovieToText } from "./formatMovie.js";
 
