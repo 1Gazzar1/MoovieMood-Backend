@@ -49,8 +49,8 @@ app.post("/ai", async (req: Request, res: Response) => {
     // query , which consists of all the chats of the user and the ai.
     const { q } = req.body;
     const response = await getGroqChatCompletion(q);
-
-    res.status(200).json({ msg: response });
+    const output = response.choices[0]?.message?.content || "";
+    res.status(200).json({ msg: output });
 });
 // RAG endpoint
 app.post("/rag", async (req: Request, res: Response) => {
