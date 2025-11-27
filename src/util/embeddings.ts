@@ -7,19 +7,20 @@ import { sleep } from "./sleep.js";
 import type { Movie } from "../types/movie.js";
 configDotenv();
 
-const API_KEY = process.env.EMBEDDING_MODEL_API_KEY;
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+const API_KEYS = [
+    process.env.EMBEDDING_MODEL_API_KEY,
+    process.env.EMBEDDING_MODEL_API_KEY2,
+    process.env.EMBEDDING_MODEL_API_KEY3,
+    process.env.EMBEDDING_MODEL_API_KEY4,
+];
+let currentIndex = 0;
+
+function getGoogleClient(API_KEY: string) {
+    return new GoogleGenAI({ apiKey: API_KEY });
+}
 
 export async function embedMovie(movie: Movie): Promise<MovieEmbeddingType> {
-    const response = await ai.models.embedContent({
-        model: "gemini-embedding-001",
-        contents: formatMovieToText(movie),
-        config: {
-            outputDimensionality: 768,
-        },
-    });
-    const embedding = response.embeddings?.at(0)?.values;
-    if (!embedding) throw new Error("AI returned no embedding!");
+    const embedding = await makeEmbedding(formatMovieToText(movie));
     return { _id: movie.id, embedding };
 }
 
@@ -53,18 +54,35 @@ export async function embedMovies(
         return output;
     }
 }
+export async function makeEmbedding(content: string, retries = 0) {
+    const ai = getGoogleClient(API_KEYS[currentIndex]);
+    try {
+        const response = await ai.models.embedContent({
+            model: "gemini-embedding-001",
+            contents: content,
+            config: {
+                outputDimensionality: 768,
+            },
+        });
+        const embedding = response.embeddings?.at(0)?.values;
 
-export async function embedUserQuery(query: string) {
-    const response = await ai.models.embedContent({
-        model: "gemini-embedding-001",
-        contents: query,
-        config: {
-            outputDimensionality: 768,
-        },
-    });
-    const embedding = response.embeddings?.at(0)?.values;
+        if (!embedding) throw ERRORS.INTERNAL("AI didn't return embeddings");
 
-    if (!embedding) throw ERRORS.INTERNAL("AI didn't return embeddings");
+        return embedding;
+    } catch (error) {
+        // condition to avoid maximum recursion depth error.
+        if (retries > API_KEYS.length)
+            throw ERRORS.INTERNAL("All api keys are rate limited");
 
-    return embedding;
+        const code = (error as any)?.error?.code as number | undefined;
+        // too many requests means i'm getting rate limited.
+        if (code === 429) {
+            // switch to another api-key
+            currentIndex = (currentIndex + 1) % API_KEYS.length;
+
+            return makeEmbedding(content, retries + 1);
+        }
+        // if it's a weird error just throw it.
+        throw error;
+    }
 }
