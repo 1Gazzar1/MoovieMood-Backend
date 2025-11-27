@@ -2,7 +2,7 @@ import express, { ErrorRequestHandler, Request, Response } from "express";
 import { CustomError, ERRORS } from "./errors/error.js";
 import { config } from "dotenv";
 import movieEmbeddingRouter from "./routes/MovieEmbeddingRouter.js";
-import { embedUserQuery } from "./util/embeddings.js";
+import { makeEmbedding } from "./util/embeddings.js";
 import { connectDB } from "./db/db.js";
 import { getGroqChatCompletion, RAG } from "./util/LLM_Chat.js";
 import { MovieEmbedding, MovieEmbeddingType } from "./db/schema.js";
@@ -67,7 +67,7 @@ app.post("/rag", async (req: Request, res: Response) => {
         throw ERRORS.BAD_REQUEST("user query must be string!");
 
     // embed the user query (question)
-    const userEmbedding = await embedUserQuery(q);
+    const userEmbedding = await makeEmbedding(q);
 
     // vector search --  to compare 'embedding' with db's embeddings
     const movieEmbeddings = (await MovieEmbedding.aggregate([
