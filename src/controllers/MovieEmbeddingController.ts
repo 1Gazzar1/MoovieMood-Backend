@@ -13,7 +13,7 @@ export const createMovieEmbedding = async (req: Request, res: Response) => {
 export const createMovieEmbeddings = async (req: Request, res: Response) => {
     const movies = req.body as Movie[];
     console.log(Buffer.byteLength(JSON.stringify(movies), "utf8"), "bytes");
-    const moviesInDB = await MovieEmbedding.find().select("id");
+    const moviesInDB = await MovieEmbedding.find().select("_id");
     console.log(moviesInDB.length);
     const moviesInDbIdsSet = new Set<number>(moviesInDB.map((m) => m._id));
     const moviesNotInDb = movies.filter((m) => !moviesInDbIdsSet.has(m.id));

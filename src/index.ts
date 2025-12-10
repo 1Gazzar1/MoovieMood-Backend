@@ -20,7 +20,7 @@ const PORT = process.env.PORT;
 // cors
 app.use(
     cors({
-        origin: ["http://localhost:5173", "https://mooviemood.vercel.app"],
+        origin: ["http://localhost:5173", "https://mooviemood.vercel.app" , "https://mooviemood2.vercel.app"],
     })
 );
 
@@ -35,6 +35,12 @@ app.use(log);
 app.get("/", (req, res) => {
     console.log(req.method, req.host, req.hostname);
     res.json("Hello world");
+});
+app.get("/ids", async (req, res) => {
+    const movies = await MovieEmbedding.find().select("_id");
+    const ids = movies.map((m) => m._id);
+
+    res.status(200).send(ids);
 });
 app.get("/movies/:start/:end", async (req: Request, res: Response) => {
     const st = +req.params.start;
