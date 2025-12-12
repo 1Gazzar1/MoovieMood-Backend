@@ -7,12 +7,16 @@ const groq = new Groq({ apiKey: process.env.LLM_MODEL_API_KEY });
 export async function RAG(
     userQuery: string,
     relevantMovieIds: number[],
-    userPreference: number[] // also movieIds (but the ones the user watched / liked)
+    userPreference: number[], // also movieIds (but the ones the user watched / liked)
+    conversation: string
 ) {
     const relevantMovies = await getMoviesPerIds(relevantMovieIds);
     const userMovies = await getMoviesPerIds(userPreference);
     const aiQuery = `
         You are an AI Assistant for a Movie website.
+
+        This is the conversation between you and the user:
+        ${conversation}
 
         Relevant Movie Info: 
         ${relevantMovies

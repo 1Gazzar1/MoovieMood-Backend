@@ -20,7 +20,11 @@ const PORT = process.env.PORT;
 // cors
 app.use(
     cors({
-        origin: ["http://localhost:5173", "https://mooviemood.vercel.app" , "https://mooviemood2.vercel.app"],
+        origin: [
+            "http://localhost:5173",
+            "https://mooviemood.vercel.app",
+            "https://mooviemood2.vercel.app",
+        ],
     })
 );
 
@@ -60,13 +64,20 @@ app.post("/ai", async (req: Request, res: Response) => {
 });
 // RAG endpoint
 app.post("/rag", async (req: Request, res: Response) => {
-    // user query
-    const { q } = req.query;
-    console.log(q);
+    // body should have:
+    // q (user query/question)
+    // userPreference (list of movie ids)
+    // conversation (string that contains the whole conversation)
 
-    const userPreference = req.body || []; //should be a list of movie ids
+    const { userPreference, q, conversation } = req.body; 
+
+    if (!userPreference || !q || !conversation)
+        throw ERRORS.BAD_REQUEST(
+            "missing body properties!, make sure to have all \
+            'userPreference','q' and 'conversation'"
+        );
     if (!Array.isArray(userPreference))
-        throw ERRORS.BAD_REQUEST("body has an object and not a list!");
+        throw ERRORS.BAD_REQUEST("userPreference needs to be a list!");
     console.log(userPreference);
 
     if (typeof q !== "string")
@@ -91,7 +102,12 @@ app.post("/rag", async (req: Request, res: Response) => {
     // only select the movie ids
     const relevantMovieIds = movieEmbeddings.map((doc) => doc._id);
     // LLM chat message
-    const response = await RAG(q, relevantMovieIds, userPreference);
+    const response = await RAG(
+        q,
+        relevantMovieIds,
+        userPreference,
+        conversation
+    );
 
     res.status(200).json({ status: 200, response });
 });
